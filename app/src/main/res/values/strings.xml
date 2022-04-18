@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Timer</string>
+    <string name="zero_time">00</string>
+    <string name="button_stop">STOP</string>
+    <string name="button_start">START</string>
+    <string name="text_separator">:</string>
+    <string name="name_page">Timer</string>
+    <string name="button_clear">CLEAR</string>
 </resources>

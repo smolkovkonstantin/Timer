@@ -37,6 +37,24 @@ class MainActivity : AppCompatActivity() {
         return mutableListOf(second % 60, (minute + second / 60) % 60, hour + minute / 60)
     }
 
+    private fun sixty(timeStart: MutableList<Int>): MutableList<Int> {
+        if (timeStart[1] == 0 && timeStart[2] > 0) {
+            if (timeStart[2] > 0) timeStart[1] = 60
+            timeStart[2] -= 1
+        }
+        if (timeStart[0] == 0 && timeStart[1] > 0) {
+            if (timeStart[1] > 0) timeStart[0] = 60
+            timeStart[1] -= 1
+
+            if (timeStart[1] == 0 && timeStart[2] > 0) {
+                if (timeStart[2] > 0) timeStart[1] = 60
+                timeStart[2] -= 1
+            }
+        }
+        timeStart[0] -= 1
+        return timeStart
+    }
+
     private var hour: EditText? = null
     private var minute: EditText? = null
     private var second: EditText? = null
@@ -59,30 +77,32 @@ class MainActivity : AppCompatActivity() {
             if (arrayOf(hour, minute, second).all { it?.text.contentEquals("") }) {
                 Toast.makeText(this, "Засеките время", Toast.LENGTH_SHORT).show()
             } else {
-
-                val timeStart =
+                if (stopAndclear?.text == "CLEAR") stopAndclear?.text = "STOP"
+                var timeStart =
                     secondTominuteTohour(toint(second), toint(minute), toint(hour)).toMutableList()
-
+                var flagCountdown = true
                 val myThread = Thread { // создание нового потока
                     while (timeStart.any { it > 0 }) {
-                        if (timeStart[1] == 0 && timeStart[2] > 0) {
-                            if (timeStart[2] > 0) timeStart[1] = 60
-                            timeStart[2] -= 1
-                        }
-                        if (timeStart[0] == 0 && timeStart[1] > 0) {
-                            if (timeStart[1] > 0) timeStart[0] = 60
-                            timeStart[1] -= 1
-
-                            if (timeStart[1] == 0 && timeStart[2] > 0) {
-                                if (timeStart[2] > 0) timeStart[1] = 60
-                                timeStart[2] -= 1
-                            }
-                        }
-                        timeStart[0] -= 1
+                        if (!flagCountdown) break
+                        // отсчёт секунд и преобразования полей minute и hour
+                        timeStart = sixty(timeStart)
                         // вызов процедуры, в которой идёт возварт к UI
                         countdown(timeStart)
                         // усыпление потока myThread
                         Thread.sleep(1000)
+
+                        stopAndclear?.setOnClickListener {
+                            if (stopAndclear?.text == "CLEAR") {
+                                stopAndclear?.text = "STOP"
+                                second?.setText("")
+                                minute?.setText("")
+                                hour?.setText("")
+                            }
+                            if (stopAndclear?.text == "STOP") {
+                                flagCountdown = false
+                                stopAndclear?.text = "CLEAR"
+                            }
+                        }
                     }
                 }
                 myThread.start()

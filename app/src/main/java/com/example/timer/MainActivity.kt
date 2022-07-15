@@ -61,6 +61,7 @@ class MainActivity : AppCompatActivity() {
     private var go: Button? = null
     private var stopAndclear: Button? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -78,8 +79,11 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Засеките время", Toast.LENGTH_SHORT).show()
             } else {
                 if (stopAndclear?.text == "CLEAR") stopAndclear?.text = "STOP"
-                var timeStart =
-                    secondTominuteTohour(toint(second), toint(minute), toint(hour)).toMutableList()
+                var timeStart = secondTominuteTohour(
+                    toint(second),
+                    toint(minute),
+                    toint(hour)
+                ).toMutableList()
                 var flagCountdown = true
                 val myThread = Thread { // создание нового потока
                     while (timeStart.any { it > 0 }) {

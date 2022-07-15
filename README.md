@@ -1,2 +1,2 @@
 # Timer
-Простой таймер
+simple timer
